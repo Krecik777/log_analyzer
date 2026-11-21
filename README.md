@@ -63,17 +63,17 @@ Uruchomienie: `python3 main.py benchmark` (najlepszy z 2 pomiarów).
 _Python 3.13.18, 12 wątków CPU (6 rdzeni), standardowy build (GIL włączony)._
 
 | Scenariusz | Tryb | Czas [s] | Przyspieszenie |
-|---|---|---|---|
-| CPU: analiza logów (12 plików x 100000 linii) | sekwencyjnie | 14.99 | 1.00x |
-| CPU: analiza logów (12 plików x 100000 linii) | wątki | 15.57 | 0.96x |
-| CPU: analiza logów (12 plików x 100000 linii) | procesy | 3.08 | 4.86x |
+|---|---|---:|---:|
+| CPU: analiza logów (12 plików x 100000 linii) | sekwencyjnie | 17.82 | 1.00x |
+| CPU: analiza logów (12 plików x 100000 linii) | wątki | 17.93 | 0.99x |
+| CPU: analiza logów (12 plików x 100000 linii) | procesy | 3.72 | 4.79x |
 | I/O: 40 zapytań do API (50 ms) | sekwencyjnie | 2.01 | 1.00x |
-| I/O: 40 zapytań do API (50 ms) | wątki | 0.20 | 9.93x |
-| I/O: 40 zapytań do API (50 ms) | procesy | 0.45 | 4.47x |
-| hashlib: 12 bloków po 16 MB (zwalnia GIL) | sekwencyjnie | 0.11 | 1.00x |
-| hashlib: 12 bloków po 16 MB (zwalnia GIL) | wątki | 0.02 | 6.61x |
-| hashlib: 12 bloków po 16 MB (zwalnia GIL) | procesy | 0.43 | 0.25x |
-Wyniki zależą od sprzętu (tu: środowisko z 2 rdzeniami) – na własnej maszynie uruchom benchmark ponownie i podmień tabelę.
+| I/O: 40 zapytań do API (50 ms) | wątki | 0.20 | 9.95x |
+| I/O: 40 zapytań do API (50 ms) | procesy | 0.48 | 4.17x |
+| hashlib: 12 bloków po 16 MB (zwalnia GIL) | sekwencyjnie | 0.12 | 1.00x |
+| hashlib: 12 bloków po 16 MB (zwalnia GIL) | wątki | 0.02 | 5.03x |
+| hashlib: 12 bloków po 16 MB (zwalnia GIL) | procesy | 0.49 | 0.25x |
+Wyniki zależą od sprzętu (mój: środowisko z 6 rdzeniami)
 
 ## Wnioski dotyczące GIL
 
@@ -85,4 +85,4 @@ W zadaniu CPU-bound (parsowanie regexem i agregacja w czystym Pythonie) wątki n
 - **Kolejność dekoratorów.** `@ttl_cache` musi być nałożony na `@retry` (a nie odwrotnie), żeby w cache trafiały tylko udane wyniki, a nie wyjątki.
 - **Błędne dane.** Linie niepasujące do wzorca, z nieprawidłową datą lub kodem HTTP są zliczane w `LogStats.invalid` zamiast przerywać analizę.
 - **Benchmark procesów dla `hashlib`.** Początkowo oczekiwane przyspieszenie nie wystąpiło, bo koszt przesyłania danych do procesów przewyższył zysk – opisane w wnioskach.
-- **Start procesów na macOS/Windows (`spawn`).** Cały kod uruchamiający procesy jest chroniony przez `if __name__ == "__main__":`.
+- **Start procesów na Windows (`spawn`).** Cały kod uruchamiający procesy jest chroniony przez `if __name__ == "__main__":`.
